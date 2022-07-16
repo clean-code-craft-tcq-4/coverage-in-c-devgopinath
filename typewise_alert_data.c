@@ -14,4 +14,4 @@ const BreachLimitsType BreachLimits[] =
         // CoolingType : MED_ACTIVE_COOLING
         40
     }
-}
+};
