@@ -11,9 +11,9 @@ typedef enum
 
 typedef enum
 {
-    NORMAL = 0,
-    TOO_LOW,
-    TOO_HIGH
+    TOO_LOW = 0,
+    TOO_HIGH,
+    NORMAL
 } BreachType;
 
 typedef enum
@@ -27,20 +27,28 @@ typedef struct
 {
     CoolingType coolingType;
     char brand[48];
-} BatteryCharacter;
+} BatteryAttributes;
 
 typedef struct
 {
     int upperLimit;
 } BreachLimitsType;
 
+typedef struct
+{
+    void (*report)(BreachType breachValue);
+} TargetFunctionType;
+
 BreachType inferBreach(double value, double lowerLimit, double upperLimit);
 BreachType classifyBreach(CoolingType coolingType, double temperatureInC);
-void checkAndAlert(AlertTarget alertTarget, BatteryCharacter batteryChar, double temperatureInC);
-void sendToController(BreachType breachType);
-void sendToEmail(BreachType breachType);
-void alertBreachToTarget(AlertTarget alertTarget, BreachType breachType);
+void checkAndAlert(AlertTarget alertTarget, BatteryAttributes battAttribute, double temperatureInC);
+void sendToController(BreachType breachValue);
+void sendToEmail(BreachType breachValue);
+void alertBreachToTarget(AlertTarget alertTarget, BreachType breachValue);
 
 extern const BreachLimitsType BreachLimits[];
+extern const char * BreachTypeInString[];
+extern char SendMessage[];
+extern const TargetFunctionType TargetFunctions[];
 
 #endif

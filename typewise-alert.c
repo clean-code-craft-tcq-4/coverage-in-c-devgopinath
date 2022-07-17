@@ -1,6 +1,13 @@
 #include <stdio.h>
 #include "typewise-alert.h"
 
+static void toConsole(const char * message);
+
+static void toConsole(const char * message)
+{
+    printf("%s", message);
+}
+
 BreachType inferBreach(double value, double lowerLimit, double upperLimit)
 {
     if(value < lowerLimit)
@@ -30,63 +37,44 @@ BreachType classifyBreach(CoolingType coolingType, double value)
     return inferBreach(value, lowerLimit, upperLimit);
 }
 
-void checkAndAlert(AlertTarget alertTarget, BatteryCharacter batteryChar, double temperatureInC)
+void checkAndAlert(AlertTarget alertTarget, BatteryAttributes battAttribute, double temperatureInC)
 {
-    BreachType breachType = classifyBreach(batteryChar.coolingType, temperatureInC);
+    BreachType breachValue = classifyBreach(battAttribute.coolingType, temperatureInC);
 
-    alertBreachToTarget(alertTarget, breachType);
+    alertBreachToTarget(alertTarget, breachValue);
 }
 
-void alertBreachToTarget(AlertTarget alertTarget, BreachType breachType)
+void alertBreachToTarget(AlertTarget alertTarget, BreachType breachValue)
 {
-    switch(alertTarget)
+    if (alertTarget < NO_ALERT)
     {
-        case TO_CONTROLLER:
-        {
-            sendToController(breachType);
-        }
-        break;
-        case TO_EMAIL:
-        {
-            sendToEmail(breachType);
-        }
-        break;
-        default:
-        {
-            /* no alert required */
-        }
-        break;
+        TargetFunctions[alertTarget].report(breachValue);
+    }
+    else
+    {
+        /* no alert required */
     }
 }
 
-void sendToController(BreachType breachType)
+void sendToController(BreachType breachValue)
 {
     const unsigned short header = 0xfeed;
-    printf("%x : %x\n", header, breachType);
+    sprintf(SendMessage, "%x : %x\n", header, breachValue);
+    toConsole(SendMessage);
 }
 
-void sendToEmail(BreachType breachType)
+void sendToEmail(BreachType breachValue)
 {
-    const char* recepient = "a.b@c.com";
-
-    switch(breachType)
+    if (breachValue < NORMAL)
     {
-        case TOO_LOW:
-        {
-            printf("To: %s\n", recepient);
-            printf("Hi, the temperature is too low\n");
-        }        
-        break;
-        case TOO_HIGH:
-        {
-            printf("To: %s\n", recepient);
-            printf("Hi, the temperature is too high\n");
-        }        
-        break;
-        default:
-        {
-            /* NORMAL - all okay. */
-        }
-        break;
+        const char* recepient = "a.b@c.com";
+        const char * parameterName = "temperature";
+
+        sprintf(SendMessage, "To: %s\nHi, the %s is %s\n", recepient, parameterName, BreachTypeInString[breachValue]);
+        toConsole(SendMessage);
+    }
+    else
+    {
+        /* NORMAL - all okay. */
     }
 }
