@@ -3,5 +3,5 @@
 
 int stringCompare(const char * string1, const char * string2)
 {
-    strcmp(string1, string2);
+    return strcmp(string1, string2);
 }
