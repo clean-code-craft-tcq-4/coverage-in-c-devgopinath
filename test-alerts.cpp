@@ -2,6 +2,7 @@
 
 #include "test/catch.hpp"
 #include "typewise-alert.h"
+#include "string.h"
 
 TEST_CASE("infers the breach according to limits")
 {
@@ -29,4 +30,14 @@ TEST_CASE("classify breach")
     REQUIRE(classifyBreach(DEFAULT_COOLING, -1) == TOO_LOW);
     REQUIRE(classifyBreach(DEFAULT_COOLING, 0) == NORMAL);
     REQUIRE(classifyBreach(DEFAULT_COOLING, 1) == TOO_HIGH);
+}
+
+TEST_CASE("alert controller")
+{
+    sendToController(TOO_LOW);
+    REQUIRE(strcmp(SendMessage, "feed : 0") == 0);
+    sendToController(TOO_HIGH);
+    REQUIRE(strcmp(SendMessage, "feed : 1") == 0);
+    sendToController(NORMAL);
+    REQUIRE(strcmp(SendMessage, "feed : 2") == 0);
 }
