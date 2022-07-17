@@ -64,3 +64,10 @@ TEST_CASE("alert breach")
     /* no change from last message */
     REQUIRE(strcmp(SendMessage, "To: a.b@c.com\nHi, the temperature is TOO LOW\n") == 0);
 }
+
+TEST_CASE("check classify and alert")
+{
+    BatteryAttributes battAttribute = {PASSIVE_COOLING, "BRAND"};
+    checkAndAlert(TO_CONTROLLER, battAttribute, 36);
+    REQUIRE(strcmp(SendMessage, "feed : 1\n") == 0);
+}
