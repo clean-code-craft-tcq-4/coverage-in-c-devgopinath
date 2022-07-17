@@ -1,6 +1,6 @@
 #include "typewise-alert.h"
 
-char SendMessage[30];
+char SendMessage[100];
 
 const BreachLimitsType BreachLimits[] =
 {
