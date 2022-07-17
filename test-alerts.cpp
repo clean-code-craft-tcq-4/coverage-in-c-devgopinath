@@ -50,6 +50,17 @@ TEST_CASE("check alert mail")
     sendToEmail(TOO_HIGH);
     REQUIRE(strcmp(SendMessage, "To: a.b@c.com\nHi, the temperature is TOO HIGH\n") == 0);
     sendToEmail(NORMAL);
-    /* no change in last message */
+    /* no change from last message */
     REQUIRE(strcmp(SendMessage, "To: a.b@c.com\nHi, the temperature is TOO HIGH\n") == 0);
+}
+
+TEST_CASE("alert breach")
+{
+    alertBreachToTarget(TO_CONTROLLER, TOO_LOW);
+    REQUIRE(strcmp(SendMessage, "feed : 0\n") == 0);
+    alertBreachToTarget(TO_EMAIL, TOO_LOW);
+    REQUIRE(strcmp(SendMessage, "To: a.b@c.com\nHi, the temperature is TOO LOW\n") == 0);
+    alertBreachToTarget(NO_ALERT, TOO_LOW);
+    /* no change from last message */
+    REQUIRE(strcmp(SendMessage, "To: a.b@c.com\nHi, the temperature is TOO LOW\n") == 0);
 }
