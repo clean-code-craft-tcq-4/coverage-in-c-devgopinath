@@ -25,4 +25,8 @@ TEST_CASE("classify breach")
 
     REQUIRE(classifyBreach(PASSIVE_COOLING, 36) == TOO_HIGH);
     REQUIRE(classifyBreach(MED_ACTIVE_COOLING, 41) == TOO_HIGH);
+
+    REQUIRE(classifyBreach(DEFAULT_COOLING, -1) == TOO_LOW);
+    REQUIRE(classifyBreach(DEFAULT_COOLING, 0) == NORMAL);
+    REQUIRE(classifyBreach(DEFAULT_COOLING, 1) == TOO_HIGH);
 }
