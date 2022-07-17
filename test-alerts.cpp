@@ -33,7 +33,7 @@ TEST_CASE("classify breach")
     REQUIRE(classifyBreach(DEFAULT_COOLING, 1) == TOO_HIGH);
 }
 
-TEST_CASE("alert controller")
+TEST_CASE("check alert controller")
 {
     sendToController(TOO_LOW);
     REQUIRE(strcmp(SendMessage, "feed : 0\n") == 0);
@@ -41,4 +41,15 @@ TEST_CASE("alert controller")
     REQUIRE(strcmp(SendMessage, "feed : 1\n") == 0);
     sendToController(NORMAL);
     REQUIRE(strcmp(SendMessage, "feed : 2\n") == 0);
+}
+
+TEST_CASE("check alert mail")
+{
+    sendToEmail(TOO_LOW);
+    REQUIRE(strcmp(SendMessage, "To: a.b@c.com\nHi, the temperature is TOO LOW\n") == 0);
+    sendToEmail(TOO_HIGH);
+    REQUIRE(strcmp(SendMessage, "To: a.b@c.com\nHi, the temperature is TOO HIGH\n") == 0);
+    sendToEmail(NORMAL);
+    /* no change in last message */
+    REQUIRE(strcmp(SendMessage, "To: a.b@c.com\nHi, the temperature is TOO HIGH\n") == 0);
 }
