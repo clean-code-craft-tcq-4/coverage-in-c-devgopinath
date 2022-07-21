@@ -1,32 +1,58 @@
-#pragma once
+#ifndef TYPEWISE_ALERT_H
+#define TYPEWISE_ALERT_H
 
-typedef enum {
-  PASSIVE_COOLING,
-  HI_ACTIVE_COOLING,
-  MED_ACTIVE_COOLING
+#define IS_COOLING_VALID(COOL_TYPE) (COOL_TYPE < DEFAULT_COOLING)
+#define IS_ALERT_VALID(ALERT_VALUE) (ALERT_VALUE < NO_ALERT)
+#define IS_BREACH_VALID_AND_REQ_TOBE_REPORTED(BREACH_VALUE) (BREACH_VALUE < NORMAL)
+
+typedef enum
+{
+    PASSIVE_COOLING = 0,
+    HI_ACTIVE_COOLING,
+    MED_ACTIVE_COOLING,
+    DEFAULT_COOLING
 } CoolingType;
 
-typedef enum {
-  NORMAL,
-  TOO_LOW,
-  TOO_HIGH
+typedef enum
+{
+    TOO_LOW = 0,
+    TOO_HIGH,
+    NORMAL
 } BreachType;
 
-BreachType inferBreach(double value, double lowerLimit, double upperLimit);
-BreachType classifyTemperatureBreach(CoolingType coolingType, double temperatureInC);
-
-typedef enum {
-  TO_CONTROLLER,
-  TO_EMAIL
+typedef enum
+{
+    TO_CONTROLLER = 0,
+    TO_EMAIL,
+    NO_ALERT
 } AlertTarget;
 
-typedef struct {
-  CoolingType coolingType;
-  char brand[48];
-} BatteryCharacter;
+typedef struct
+{
+    CoolingType coolingType;
+    char brand[48];
+} BatteryAttributes;
 
-void checkAndAlert(
-  AlertTarget alertTarget, BatteryCharacter batteryChar, double temperatureInC);
+typedef struct
+{
+    int upperLimit;
+} BreachLimitsType;
 
-void sendToController(BreachType breachType);
-void sendToEmail(BreachType breachType);
+typedef struct
+{
+    void (*report)(BreachType breachValue);
+} TargetFunctionType;
+
+BreachType inferBreach(double value, double lowerLimit, double upperLimit);
+BreachType classifyBreach(CoolingType coolingType, double temperatureInC);
+void checkAndAlert(AlertTarget alertTarget, BatteryAttributes battAttribute, double temperatureInC);
+void sendToController(BreachType breachValue);
+void sendToEmail(BreachType breachValue);
+void alertBreachToTarget(AlertTarget alertTarget, BreachType breachValue);
+
+extern const BreachLimitsType BreachLimits[];
+extern const char * BreachTypeInString[];
+extern char SendMessage[];
+extern const TargetFunctionType TargetFunctions[];
+
+#endif
