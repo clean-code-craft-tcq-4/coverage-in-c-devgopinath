@@ -29,7 +29,7 @@ BreachType classifyBreach(CoolingType coolingType, double value)
     int lowerLimit = 0;
     int upperLimit = 0;
 
-    if (coolingType < DEFAULT_COOLING)
+    if (IS_COOLING_VALID(coolingType))
     {
         upperLimit = BreachLimits[coolingType].upperLimit;
     }
@@ -46,7 +46,7 @@ void checkAndAlert(AlertTarget alertTarget, BatteryAttributes battAttribute, dou
 
 void alertBreachToTarget(AlertTarget alertTarget, BreachType breachValue)
 {
-    if (alertTarget < NO_ALERT)
+    if (IS_ALERT_VALID(alertTarget))
     {
         TargetFunctions[alertTarget].report(breachValue);
     }
@@ -65,7 +65,7 @@ void sendToController(BreachType breachValue)
 
 void sendToEmail(BreachType breachValue)
 {
-    if (breachValue < NORMAL)
+    if (IS_BREACH_VALID_AND_REQ_TOBE_REPORTED(breachValue))
     {
         const char* recepient = "a.b@c.com";
         const char * parameterName = "temperature";
